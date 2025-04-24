@@ -1,0 +1,25 @@
+# macOS cruft
+.DS_Store
+
+# Logs and swap files
+*.log
+*.swp
+*~
+*.bak
+
+# IDEs
+.vscode/
+.idea/
+
+# Compiled files
+*.pyc
+__pycache__/
+
+# Node/dev runtime
+node_modules/
+dist/
+build/
+
+# Secrets or env-specific
+.env
+secrets/
