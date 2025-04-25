@@ -1,12 +1,35 @@
-# bun path add
+# === ENVIRONMENT ===
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 . "$HOME/.local/bin/env"
 
-# File navigation
+# === SHELL OPTIONS ===
+setopt PROMPT_SUBST          # Expand variables in PROMPT
+setopt NO_CASE_GLOB          # Case-insensitive path globs
+setopt CORRECT               # Auto-correct mistyped commands
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# === HISTORY ===
+HISTFILE=~/.zsh_history
+HISTSIZE=5000
+SAVEHIST=5000
+setopt INC_APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS
+
+# === PROMPT CONFIG ===
+function parse_git_branch {
+  local branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+  [[ -n $branch ]] && echo " ($branch)"
+}
+function precmd {
+  GIT_BRANCH=$(parse_git_branch)
+}
+PROMPT='%F{magenta}%*%f %(?.%F{cyan}.%F{red})%n@%m%f:%F{green}%~%f%F{yellow}${GIT_BRANCH}%f %# '
+
+# === NAVIGATION ALIASES ===
 alias ..='cd ..'
 alias ...='cd ../..'
-alias ....='cd ../../..'
+alias //='cd -'
 
 # File listing
 alias ls='ls -G'            # Colorized (macOS uses BSD ls)
@@ -22,40 +45,31 @@ alias rm='rm -i'            # Prompt before deletion
 # Utilities
 alias update='brew update && brew upgrade && brew cleanup'
 
-# Enable shell-style substitutions in PROMPT
-setopt PROMPT_SUBST
+# === GIT UTILITIES ===
 
-# Git-aware prompt function
-function parse_git_branch {
-  local branch=$(git symbolic-ref --short HEAD 2>/dev/null)
-  if [[ -n $branch ]]; then
-    echo " ($branch)"
-  fi
+# Add GitHub remote with standardized naming convention
+function add-gh-remote() {
+  local repo_name=$(basename "$(pwd)")
+  git remote add gh "https://github.com/byte-6d65/${repo_name}.git"
+  echo "➕ Linked GitHub remote: gh → https://github.com/byte-6d65/${repo_name}.git"
 }
 
-# Update Git branch before each prompt
-function precmd {
-  GIT_BRANCH=$(parse_git_branch)
-}
+# dep'd idea keeping for later thought on structuring
+#function ghinit() {
+#  local repo_name=$(basename "$(pwd)")
+#  git init
+#  git add .
+#  git commit -m "Initial commit"
+#  git remote add gh "https://github.com/byte-6d65/${repo_name}.git"
+#  git push -u gh main
+#  echo "✅ Repo initialized and pushed to GitHub: $repo_name"
+#}
 
-# Final prompt string (with time, status color, git branch)
-PROMPT='%F{magenta}%*%f %(?.%F{cyan}.%F{red})%n@%m%f:%F{green}%~%f%F{yellow}${GIT_BRANCH}%f %# '
+# === ZOXIDE (smart jump) ===
+eval "$(zoxide init zsh)"
 
-# Clean, readable prompt:
-#PROMPT='%n@%m:%~ %# '
-
-# Clean autocomplete
-autoload -Uz compinit
-compinit
-
-# Better history
-HISTFILE=~/.zsh_history
-HISTSIZE=5000
-SAVEHIST=5000
-setopt INC_APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS
-
-# Autosuggestions
+# === AUTOSUGGESTIONS ===
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-# Syntax highlighting (must be last)
+# === SYNTAX HIGHLIGHTING (must be last) ===
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
