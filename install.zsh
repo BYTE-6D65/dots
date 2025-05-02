@@ -8,6 +8,7 @@
 
 # === kernel name check ===
 K_name="$(uname -s)"
+timestamp=$(date +%Y%m%d-%H%M%S)
 
 case "$K_name" in
   Darwin)
@@ -23,8 +24,8 @@ esac
 
 # === backup existing dotfiles ===
 mkdir -p "$HOME/.zsh_bak"
-cp -v "$HOME/.zshrc" "$HOME/.zsh_bak/zshrc.bak" 2>/dev/null
-cp -v "$HOME/.zprofile" "$HOME/.zsh_bak/zprofile.bak" 2>/dev/null
+cp "$HOME/.zshrc" "$HOME/.zsh_bak/zshrc.bak.$timestamp" 2>/dev/null
+cp "$HOME/.zprofile" "$HOME/.zsh_bak/zprofile.bak.$timestamp" 2>/dev/null
 
 # === move kernel-specific zshrc ===
 case "$K_name" in
