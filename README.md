@@ -53,7 +53,7 @@ This repo treats your shell as a **modular runtime environment**, not a dumping 
 ## 🔧 Plugin Handling Notes
 
 * `zsh-completions` is installed manually.
-* The `_brew` completion file is extracted from the Homebrew install and manually patched into the completions directory.
+* The `_brew` completion file is extracted from the Homebrew install and manually patched into the completions src/ directory.
 * The file `zsh-completions.plugin.zsh` is renamed to `zsh-completions.zsh` to align with the plugin loading conventions in this setup.
 * Plugin paths are currently hardcoded.
 
