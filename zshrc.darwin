@@ -1,3 +1,5 @@
+#!/bin/zsh
+# === ZSHRC ===
 # === ZSH CONFIGURATION ===
 
 # === Safe PATH baseline ===
@@ -56,8 +58,14 @@ load_plugin_if_exists() {
 # === Completions ===
 # Remove broken Homebrew completions path
 fpath=(${fpath:#/opt/homebrew/share/zsh/site-functions})
-# De-duplicate paths
+
+# Add your custom completions
+fpath+=("$HOME/.zsh/zsh-completions/src")
+
+# De-duplicate
 fpath=("${(@u)fpath}")
+
+# Initialize completions
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
