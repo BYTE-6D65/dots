@@ -28,23 +28,36 @@ PROMPT=$'%F{magenta}%*%f %(?.%F{cyan}.%F{red})%n@%m%f:%F{green}%~%f%F{yellow}${G
 # === Aliases ===
 alias ..='cd ..'
 alias ...='cd ../..'
-alias l='ls -l'
-alias ll='ls -lah'
+alias l='ls -l --color=auto'
+alias ll='ls -lah --color=auto'
 alias grep='grep --color=auto'
+alias cat='bat'
+alias sduo='sudo'
 alias mv='mv -i'
 alias cp='cp -i'
 alias rm='rm -i'
+
+fastfetch
 
 # === Plugin loader helper ===
 load_plugin_if_exists() {
   local path="$1"
   if [[ -f "$path" ]]; then
-    echo "🔍 Sourcing: $path"
+    echo "✅ Sourcing: $path"
     source "$path"
+    if [[ $? -ne 0 ]]; then
+      echo "❌ Failed to source: $path"
+    fi
+  else
+    echo "❌ Plugin not found: $path"
   fi
 }
 
 # === Completions ===
+# Remove broken Homebrew completions path
+fpath=(${fpath:#/opt/homebrew/share/zsh/site-functions})
+# De-duplicate paths
+fpath=("${(@u)fpath}")
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
@@ -60,3 +73,4 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
 fi
+
