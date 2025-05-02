@@ -1,17 +1,19 @@
-# ZSH configuration file
-# This file is sourced by ZSH at every shell spawn
-# === SHELL OPTIONS ===
-setopt PROMPT_SUBST          # Expand variables in PROMPT
-setopt NO_CASE_GLOB          # Case-insensitive path globs
-setopt CORRECT               # Auto-correct mistyped commands
-autoload -Uz compinit && compinit
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# === ZSH CONFIGURATION ===
 
-# === HISTORY ===
-HISTFILE=~/.zsh_history
+# === Safe PATH baseline ===
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.local/bin:$PATH"
+
+# === Shell options ===
+setopt PROMPT_SUBST
+setopt NO_CASE_GLOB
+setopt CORRECT
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+
+HISTFILE="$HOME/.zsh_history"
 HISTSIZE=5000
 SAVEHIST=5000
-setopt INC_APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS
 
 # === PROMPT CONFIG ===
 function parse_git_branch {
@@ -23,94 +25,38 @@ function precmd {
 }
 PROMPT=$'%F{magenta}%*%f %(?.%F{cyan}.%F{red})%n@%m%f:%F{green}%~%f%F{yellow}${GIT_BRANCH}\n%f%#-> '
 
-# === NAVIGATION ALIASES ===
+# === Aliases ===
 alias ..='cd ..'
 alias ...='cd ../..'
-alias //='cd -'
+alias l='ls -l'
+alias ll='ls -lah'
+alias grep='grep --color=auto'
+alias mv='mv -i'
+alias cp='cp -i'
+alias rm='rm -i'
 
-# === File listing ===
-alias l='ls -l'             # Long listing
-alias ls='ls -G'            # Colorized (macOS uses BSD ls)
-alias ll='ls -lah'          # Human-readable sizes
-alias lt='ls -lat'           # Sort by mod time
+# === Plugin loader helper ===
+load_plugin_if_exists() {
+  local path="$1"
+  if [[ -f "$path" ]]; then
+    echo "🔍 Sourcing: $path"
+    source "$path"
+  fi
+}
 
-# === Safe file ops ===
-alias mv='mv -i'            # Prompt before overwrite
-alias cp='cp -i'            # Prompt before overwrite
-alias rm='rm -i'            # Prompt before deletion
+# === Completions ===
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-# === switching & extentions ===
-alias sduo='sudo'          # sudo mistype
-alias cat='bat'            # Batcat (syntax highlighting)
-alias top='htop'            # Top (interactive process viewer)
-alias df='df -h'            # Disk free (human-readable)
-alias du='du -h'            # Disk usage (human-readable)
-alias lsblk='lsblk -f'        # List block devices with filesystem info
-alias grep='grep --color=auto' # Colorized grep
-alias find='find . -type f -name' # Find files
+# === Optional Plugins (only load if present) ===
+load_plugin_if_exists "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+load_plugin_if_exists "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+load_plugin_if_exists "$HOME/.zsh/zsh-completions/zsh-completions.zsh"
 
-
-# Utilities
-alias update='brew update && brew upgrade && brew cleanup'
-
-# === ZOXIDE (smart jump) ===
-eval "$(zoxide init zsh)"
-
-# === BUN ADD ===
+# === Tools ===
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-
-# === GIT UTILITIES ===
-
-# Add GitHub remote with standardized naming convention
-function add-gh-remote() {
-  local repo_name=$(basename "$(pwd)")
-  git remote add gh "https://github.com/byte-6d65/${repo_name}.git"
-  echo "➕ Linked GitHub remote: gh → https://github.com/byte-6d65/${repo_name}.git"
-}
-
-# Global path buffer
-PLUGIN_PATH=""
-
-# Detect plugin path using a case-style install resolver
-plugin_prefix() {
-  local plugin="$1"
-  local candidates=(
-    "/opt/homebrew/share/${plugin}/${plugin}.zsh"
-    "/usr/share/zsh/plugins/${plugin}/${plugin}.zsh"
-    "$HOME/.zsh/${plugin}/${plugin}.zsh"
-  )
-
-  for path in "${candidates[@]}"; do
-    case "$path" in
-      (*)
-        echo "🔎 Checking: $path"
-        if [[ -f "$path" ]]; then
-          PLUGIN_PATH="$path"
-          return
-        fi
-        ;;
-    esac
-  done
-
-  PLUGIN_PATH=""
-  return 1
-}
-
-# Source the resolved plugin path
-load_plugin() {
-  local plugin="$1"
-  plugin_prefix "$plugin" || {
-    echo "⚠️  Plugin not found: $plugin"
-    return 1
-  }
-
-  echo "🔍 Sourcing: $PLUGIN_PATH"
-  source "$PLUGIN_PATH"
-}
-
-# === LOAD PLUGINS ===
-load_plugin "zsh-autosuggestions"
-load_plugin "zsh-completions"
-load_plugin "zsh-syntax-highlighting"  # Always last
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
