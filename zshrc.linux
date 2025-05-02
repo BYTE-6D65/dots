@@ -1,8 +1,7 @@
-# === ENVIRONMENT ===
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-. "$HOME/.local/bin/env"
+###### trash 4 RN #######
 
+# ZSH configuration file
+# This file is sourced by ZSH at every shell spawn
 # === SHELL OPTIONS ===
 setopt PROMPT_SUBST          # Expand variables in PROMPT
 setopt NO_CASE_GLOB          # Case-insensitive path globs
@@ -24,23 +23,32 @@ function parse_git_branch {
 function precmd {
   GIT_BRANCH=$(parse_git_branch)
 }
-PROMPT='%F{magenta}%*%f %(?.%F{cyan}.%F{red})%n@%m%f:%F{green}%~%f%F{yellow}${GIT_BRANCH}%f %# '
+PROMPT=$'%F{magenta}%*%f %(?.%F{cyan}.%F{red})%n@%m%f:%F{green}%~%f%F{yellow}${GIT_BRANCH}\n%f%#-> '
 
 # === NAVIGATION ALIASES ===
 alias ..='cd ..'
 alias ...='cd ../..'
 alias //='cd -'
 
-# File listing
+# === File listing ===
 alias ls='ls -G'            # Colorized (macOS uses BSD ls)
 alias ll='ls -lh'           # Human-readable sizes
 alias la='ls -la'           # Show all files
 alias lt='ls -lt'           # Sort by mod time
 
-# Safe file ops
+# === Safe file ops ===
 alias mv='mv -i'            # Prompt before overwrite
 alias cp='cp -i'            # Prompt before overwrite
 alias rm='rm -i'            # Prompt before deletion
+
+# === CMD switching ===
+alias cat='bat'            # Batcat (syntax highlighting)
+alias top='htop'            # Top (interactive process viewer)
+alias df='df -h'            # Disk free (human-readable)
+alias du='du -h'            # Disk usage (human-readable)
+alias grep='grep --color=auto' # Colorized grep
+alias find='find . -type f -name' # Find files
+
 
 # Utilities
 alias update='brew update && brew upgrade && brew cleanup'

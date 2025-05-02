@@ -1,0 +1,116 @@
+# ZSH configuration file
+# This file is sourced by ZSH at every shell spawn
+# === SHELL OPTIONS ===
+setopt PROMPT_SUBST          # Expand variables in PROMPT
+setopt NO_CASE_GLOB          # Case-insensitive path globs
+setopt CORRECT               # Auto-correct mistyped commands
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# === HISTORY ===
+HISTFILE=~/.zsh_history
+HISTSIZE=5000
+SAVEHIST=5000
+setopt INC_APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS
+
+# === PROMPT CONFIG ===
+function parse_git_branch {
+  local branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+  [[ -n $branch ]] && echo " ($branch)"
+}
+function precmd {
+  GIT_BRANCH=$(parse_git_branch)
+}
+PROMPT=$'%F{magenta}%*%f %(?.%F{cyan}.%F{red})%n@%m%f:%F{green}%~%f%F{yellow}${GIT_BRANCH}\n%f%#-> '
+
+# === NAVIGATION ALIASES ===
+alias ..='cd ..'
+alias ...='cd ../..'
+alias //='cd -'
+
+# === File listing ===
+alias l='ls -l'             # Long listing
+alias ls='ls -G'            # Colorized (macOS uses BSD ls)
+alias ll='ls -lah'          # Human-readable sizes
+alias lt='ls -lat'           # Sort by mod time
+
+# === Safe file ops ===
+alias mv='mv -i'            # Prompt before overwrite
+alias cp='cp -i'            # Prompt before overwrite
+alias rm='rm -i'            # Prompt before deletion
+
+# === switching & extentions ===
+alias sduo='sudo'          # sudo mistype
+alias cat='bat'            # Batcat (syntax highlighting)
+alias top='htop'            # Top (interactive process viewer)
+alias df='df -h'            # Disk free (human-readable)
+alias du='du -h'            # Disk usage (human-readable)
+alias lsblk='lsblk -f'        # List block devices with filesystem info
+alias grep='grep --color=auto' # Colorized grep
+alias find='find . -type f -name' # Find files
+
+
+# Utilities
+alias update='brew update && brew upgrade && brew cleanup'
+
+# === ZOXIDE (smart jump) ===
+eval "$(zoxide init zsh)"
+
+# === BUN ADD ===
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+. "$HOME/.local/bin/env"
+
+# === GIT UTILITIES ===
+
+# Add GitHub remote with standardized naming convention
+function add-gh-remote() {
+  local repo_name=$(basename "$(pwd)")
+  git remote add gh "https://github.com/byte-6d65/${repo_name}.git"
+  echo "➕ Linked GitHub remote: gh → https://github.com/byte-6d65/${repo_name}.git"
+}
+
+# Global path buffer
+PLUGIN_PATH=""
+
+# Detect plugin path using a case-style install resolver
+plugin_prefix() {
+  local plugin="$1"
+  local candidates=(
+    "/opt/homebrew/share/${plugin}/${plugin}.zsh"
+    "/usr/share/zsh/plugins/${plugin}/${plugin}.zsh"
+    "$HOME/.zsh/${plugin}/${plugin}.zsh"
+  )
+
+  for path in "${candidates[@]}"; do
+    case "$path" in
+      (*)
+        echo "🔎 Checking: $path"
+        if [[ -f "$path" ]]; then
+          PLUGIN_PATH="$path"
+          return
+        fi
+        ;;
+    esac
+  done
+
+  PLUGIN_PATH=""
+  return 1
+}
+
+# Source the resolved plugin path
+load_plugin() {
+  local plugin="$1"
+  plugin_prefix "$plugin" || {
+    echo "⚠️  Plugin not found: $plugin"
+    return 1
+  }
+
+  echo "🔍 Sourcing: $PLUGIN_PATH"
+  source "$PLUGIN_PATH"
+}
+
+# === LOAD PLUGINS ===
+load_plugin "zsh-autosuggestions"
+load_plugin "zsh-completions"
+load_plugin "zsh-syntax-highlighting"  # Always last
