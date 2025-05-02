@@ -31,7 +31,7 @@ cd dots
 chmod +x install.zsh
 
 # Run the install script
-./install.zsh
+zsh ./install.zsh
 ```
 
 This will:
