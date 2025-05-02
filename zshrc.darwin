@@ -59,7 +59,7 @@ eval "$(zoxide init zsh)"
 # === BUN ADD ===
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-. "$HOME/.local/bin/env"
+
 
 # === GIT UTILITIES ===
 
