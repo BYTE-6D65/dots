@@ -1,10 +1,10 @@
+#!/bin/zsh
 # === Dotfile Classification ===
 # .zprofile → one-time login shell (plumbing, environment, dependencies)
 # .zshrc    → every interactive shell (UI, toys, keybindings, zoxide, bun)
 # .zlogin   → rarely used (post-login hooks)
 # .zshenv   → avoid unless portable env vars (loaded even in scripts)
 # === install script for dotfiles ===
-#!/bin/zsh
 
 # === kernel name check ===
 K_name="$(uname -s)"
