@@ -7,29 +7,39 @@
 #!/bin/zsh
 
 # === kernel name check ===
-K_name=$(uname -s)
-if [[ "$K_name" == "Darwin" ]]; then
-  echo "Darwin detected"
-elif [[ "$K_name" == "Linux" ]]; then
-  echo "Linux detected"
-else
-  echo "Unknown OS, no specific config loaded."
-fi
+K_name="$(uname -s)"
+
+case "$K_name" in
+  Darwin)
+    echo "Darwin detected"
+    ;;
+  Linux)
+    echo "Linux detected"
+    ;;
+  *)
+    echo "Unknown OS, no specific config loaded."
+    ;;
+esac
 
 # === backup existing dotfiles ===
-mkdir -p ~/.zsh_bak
-cp -v ~/.zshrc ~/.zsh_bak/zshrc.bak 2>/dev/null
-cp -v ~/.zprofile ~/.zsh_bak/zprofile.bak 2>/dev/null
+mkdir -p "$HOME/.zsh_bak"
+cp -v "$HOME/.zshrc" "$HOME/.zsh_bak/zshrc.bak" 2>/dev/null
+cp -v "$HOME/.zprofile" "$HOME/.zsh_bak/zprofile.bak" 2>/dev/null
 
-# === move new dotfiles to home ===
-mv -v zshrc ~/.zshrc
-mv -v zprofile ~/.zprofile
+# === move kernel-specific zshrc ===
+case "$K_name" in
+  Darwin)
+    mv -v zshrc.darwin "$HOME/.zshrc"
+    echo "Darwin version of zshrc moved to ~/.zshrc"
+    ;;
+  Linux)
+    mv -v zshrc.linux "$HOME/.zshrc"
+    echo "Linux version of zshrc moved to ~/.zshrc"
+    ;;
+  *)
+    echo "Unknown OS, no specific config loaded."
+    ;;
+esac
 
-# === move kernel-specific dotfile ===
-if [[ "$K_name" == "Linux" ]]; then
-  mv -v zshrc.linux ~/.zshrc
-elif [[ "$K_name" == "Darwin" ]]; then
-  mv -v zshrc.darwin ~/.zshrc
-else
-  echo "Unknown OS, no specific kernel-specific config moved."
-fi
+# === move zprofile ===
+mv -v zprofile "$HOME/.zprofile"
