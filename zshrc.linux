@@ -37,6 +37,8 @@ alias mv='mv -i'
 alias cp='cp -i'
 alias rm='rm -i'
 
+fastfetch
+
 # === Plugin loader helper ===
 load_plugin_if_exists() {
   local path="$1"
@@ -54,8 +56,6 @@ load_plugin_if_exists() {
 # === Completions ===
 autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-fastfetch
 
 # === Optional Plugins (manual-install based path) ===
 load_plugin_if_exists "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
