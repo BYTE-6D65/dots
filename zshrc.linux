@@ -1,6 +1,5 @@
 #!/bin/zsh
 # === ZSH CONFIGURATION ===
-
 # === Safe PATH baseline ===
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$HOME/.local/bin:$PATH"
 
@@ -29,9 +28,11 @@ PROMPT=$'%F{magenta}%*%f %(?.%F{cyan}.%F{red})%n@%m%f:%F{green}%~%f%F{yellow}${G
 # === Aliases ===
 alias ..='cd ..'
 alias ...='cd ../..'
-alias l='ls -l'
-alias ll='ls -lah'
+alias l='ls -l --color=auto'
+alias ll='ls -lah --color=auto'
 alias grep='grep --color=auto'
+alias cat='bat'
+alias sduo='sudo'
 alias mv='mv -i'
 alias cp='cp -i'
 alias rm='rm -i'
@@ -56,15 +57,17 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 fastfetch
 
-# === Optional Plugins (manual-based install path) ===
-load_plugin_if_exists ".zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
-load_plugin_if_exists ".zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-load_plugin_if_exists ".zsh/zsh-completions/zsh-completions.zsh"
+# === Optional Plugins (manual-install based path) ===
+load_plugin_if_exists "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+load_plugin_if_exists "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+load_plugin_if_exists "$HOME/.zsh/zsh-completions/zsh-completions.zsh"
 
+# === add zoxide ===
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
 fi
 
+# === add linuxbrew ===
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # Added by LM Studio CLI (lms)
