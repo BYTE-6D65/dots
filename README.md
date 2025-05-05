@@ -1,6 +1,6 @@
 # Dotfiles: ZSH Configuration Restore
 
-This repository provides a portable, cross-platform configuration restore system for Zsh-based environments. It is not a setup or provisioning tool — it assumes you already have your shell environment and key packages installed.
+This repository provides a portable, cross-platform configuration restore system for Zsh-based environments.
 
 ## ✅ Purpose
 
@@ -19,7 +19,7 @@ Ensure the following are already installed on the system:
 * [zsh-completions](https://github.com/zsh-users/zsh-completions)
 * [zoxide](https://github.com/ajeetdsouza/zoxide), [fastfetch](https://github.com/fastfetch-cli/fastfetch), Bun, etc.
 
-## 🛠 Install Steps
+## 🛠 Install Steps (install script is ass rn suggest manual cp of needed file)
 
 ```bash
 # Clone the repo
@@ -27,11 +27,8 @@ cd ~/Projects
 git clone https://github.com/byte-6d65/dots.git
 cd dots
 
-# Mod +x file
-chmod +x install.zsh
-
 # Run the install script
-zsh ./install.zsh
+./install.zsh
 ```
 
 This will:
@@ -44,22 +41,21 @@ This will:
 
 ## 🌱 Philosophy
 
-This repo treats your shell as a **modular runtime environment**, not a dumping ground. You should:
+This repo treats your shell as a **cleam room not a dumping ground for permenent bandaids**, You should:
 
-* Add aliases, plugins, or tools explicitly
-* Keep RC files clean, readable, and declarative
+* Stay platform scoped, cp the base amd extend for new plat
+* Manual install into the '~/.zsh' dir any extentions
+* Keep RC files clean, readable
 * Understand what gets sourced and when
 
 ## 🔧 Plugin Handling Notes
 
-* `zsh-completions` is installed manually.
+* All plugins are installed manually
 * The `_brew` completion file is extracted from the Homebrew install and manually patched into the completions src/ directory.
 * The file `zsh-completions.plugin.zsh` is renamed to `zsh-completions.zsh` to align with the plugin loading conventions in this setup.
-* Plugin paths are currently hardcoded.
 
 ### 📌 TODO
 
-* Build a multipath resolver function to eliminate hardcoded plugin paths.
 * Add optional automation to fetch missing plugins and perform the required patching step automatically.
 
 ## 🧹 After Install
