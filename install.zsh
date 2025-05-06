@@ -18,8 +18,8 @@ else
 fi
 
 if (( emoji_ok )); then
-  banner_start="###🌟"
-  banner_end="🌟###"
+  banner_start="🌟🌟🌟"
+  banner_end="🌟🌟🌟"
 else
   banner_start="###"
   banner_end="###"
