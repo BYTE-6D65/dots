@@ -1,6 +1,6 @@
 #!/bin/zsh
 # === Dotfile Classification ===
-# .zprofile → one-time login shell (plumbing, environment, dependencies)
+# .zprofile → (dawin only currently) one-time login shell (plumbing, environment, dependencies)
 # .zshrc    → every interactive shell (UI, toys, keybindings, zoxide, bun)
 # .zlogin   → rarely used (post-login hooks)
 # .zshenv   → avoid unless portable env vars (loaded even in scripts)
@@ -43,7 +43,11 @@ esac
 echo "$banner_start Backing up current dotfiles $banner_end"
 mkdir -p "$HOME/.zsh_bak"
 cp -v "$HOME/.zshrc" "$HOME/.zsh_bak/zshrc.bak.$timestamp" 2>/dev/null
-cp -v "$HOME/.zprofile" "$HOME/.zsh_bak/zprofile.bak.$timestamp" 2>/dev/null
+# === darwin-specific backup ===
+if [[ "$K_name" == "Darwin" ]]; then
+  cp -v "$HOME/.zprofile" "$HOME/.zsh_bak/zprofile.bak.$timestamp" 2>/dev/null
+fi
+
 
 # === move kernel-specific zshrc ===
 case "$K_name" in
