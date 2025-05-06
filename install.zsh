@@ -18,8 +18,8 @@ else
 fi
 
 if (( emoji_ok )); then
-  banner_start="🌟"
-  banner_end="🌟"
+  banner_start="###🌟"
+  banner_end="🌟###"
 else
   banner_start="###"
   banner_end="###"
@@ -42,14 +42,16 @@ esac
 # === backup existing dotfiles ===
 echo "$banner_start Backing up current dotfiles $banner_end"
 mkdir -p "$HOME/.zsh_bak"
-cp "$HOME/.zshrc" "$HOME/.zsh_bak/zshrc.bak.$timestamp" 2>/dev/null
-cp "$HOME/.zprofile" "$HOME/.zsh_bak/zprofile.bak.$timestamp" 2>/dev/null
+cp -v "$HOME/.zshrc" "$HOME/.zsh_bak/zshrc.bak.$timestamp" 2>/dev/null
+cp -v "$HOME/.zprofile" "$HOME/.zsh_bak/zprofile.bak.$timestamp" 2>/dev/null
 
 # === move kernel-specific zshrc ===
 case "$K_name" in
   Darwin)
     mv -v zshrc.darwin "$HOME/.zshrc"
     echo "$banner_start Darwin zshrc installed to ~/.zshrc $banner_end"
+    mv -v zprofile.darwin "$HOME/.zprofile"
+    echo "$banner_start Darwin zprofile installed to ~/.zprofile $banner_end"
     ;;
   Linux)
     mv -v zshrc.linux "$HOME/.zshrc"
@@ -59,10 +61,6 @@ case "$K_name" in
     echo "$banner_start Unknown OS, no specific config moved. $banner_end"
     ;;
 esac
-
-# === move zprofile ===
-echo "$banner_start Installing zprofile $banner_end"
-mv -v zprofile "$HOME/.zprofile"
 
 # === source new zshrc ===
 echo "$banner_start Sourcing new ~/.zshrc $banner_end"

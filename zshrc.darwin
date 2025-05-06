@@ -68,8 +68,8 @@ autoload -Uz compinit && compinit
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # === Optional Plugins (only load if present) ===
-load_plugin_if_exists "/opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-load_plugin_if_exists "/opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+load_plugin_if_exists "$HOME/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh"
+load_plugin_if_exists "$HOME/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 load_plugin_if_exists "$HOME/.zsh/zsh-completions/zsh-completions.zsh"
 
 # === Tools ===
