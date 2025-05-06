@@ -23,7 +23,6 @@ Ensure the following are already installed on the system:
 
 ```bash
 # Clone the repo
-cd ~/Projects
 git clone https://github.com/byte-6d65/dots.git
 cd dots
 
@@ -36,7 +35,7 @@ This will:
 * Detect the kernel type (`Darwin` or `Linux`)
 * Backup your current `.zshrc` and `.zprofile` into `~/.zsh_bak/`
 * Move the appropriate config (`zshrc.darwin` or `zshrc.linux`) to `~/.zshrc`
-* Move `zprofile` to `~/.zprofile`
+* Move the appropriate config (`zprofile.darwin` or `zprofile.linux`) to `~/.zprofile`
 * Source the new `.zshrc`
 
 ## 🌱 Philosophy
