@@ -17,7 +17,7 @@ Ensure the following are already installed on the system:
 * [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
 * [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
 * [zsh-completions](https://github.com/zsh-users/zsh-completions)
-* non-required but lines included: [zoxide](https://github.com/ajeetdsouza/zoxide), [fastfetch](https://github.com/fastfetch-cli/fastfetch), Bun, etc.
+* non-required but lines included: [zoxide](https://github.com/ajeetdsouza/zoxide), [fastfetch](https://github.com/fastfetch-cli/fastfetch), Bun, lmstudio, etc.
 
 ## 🛠 Install Steps (install script is ass rn suggest manual cp of needed file)
 
