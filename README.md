@@ -1,70 +1,81 @@
-# Dotfiles: ZSH Configuration Restore
+# Dotfiles: Deterministic Zsh Installer
 
-This repository provides a portable, cross-platform configuration restore system for Zsh-based environments.
+A minimal, auditable Zsh configuration system with a POSIX-compatible installer. Single-file zshrc per OS, no runtime tiers.
 
-## ✅ Purpose
+## Goals
 
-* Restore `.zshrc` and `.zprofile` from clean, version-controlled sources
-* Automatically install platform-specific configurations (`Darwin`, `Linux`)
-* Backup existing configs before overwriting
+- Deterministic Zsh runtime behavior
+- Explicit, interactive install flow (OS selection)
+- Consolidated runtime layout under `~/.zsh/`
+- No dynamic mutation of runtime files
 
-## ⚠️ Expectations
-
-This repo **does not install** Zsh or any external plugins.
-Ensure the following are already installed on the system:
-
-* Zsh
-* [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
-* [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-* [zsh-completions](https://github.com/zsh-users/zsh-completions)
-* non-required but lines included: [zoxide](https://github.com/ajeetdsouza/zoxide), [fastfetch](https://github.com/fastfetch-cli/fastfetch), Bun, lmstudio, etc.
-
-## 🛠 Install Steps (install script is ass rn suggest manual cp of needed file)
+## Quick Start
 
 ```bash
-# Clone the repo
-git clone https://github.com/byte-6d65/dots.git
-cd dots
-
-# Run the install script
-./install.zsh
+./install.sh
 ```
 
-This will:
+The installer prompts for OS selection:
+- `linux`
+- `darwin`
+- `auto` (default, uses `uname -s`)
 
-* Detect the kernel type (`Darwin` or `Linux`)
-* Backup your current `.zshrc` and `.zprofile` into `~/.zsh_bak/`
-* Move the appropriate config (`zshrc.darwin` or `zshrc.linux`) to `~/.zshrc`
-* Move the appropriate config (`zprofile.darwin` or `zprofile.linux`) to `~/.zprofile`
-* Source the new `.zshrc`
+Non-interactive runs default to `auto`.
 
-## 🌱 Philosophy
+## Directory Layout (Installed)
 
-This repo treats your shell as a **cleam room not a dumping ground for permenent bandaids**, You should:
+```
+~/.zsh/
+├── backup/      # Backups + install reports
+└── plugins/     # Zsh plugins
+```
 
-* Stay platform scoped, cp the base amd extend for new plat
-* Manual install into the '~/.zsh' dir any extentions
-* Keep RC files clean, readable
-* Understand what gets sourced and when
+`~/.zshrc` is installed directly (no loader).
 
-## 🔧 Plugin Handling Notes
+## What Gets Installed
 
-* All plugins are installed manually
-* The `_brew` completion file is extracted from the Homebrew install and manually patched into the completions src/ directory.
-* The file `zsh-completions.plugin.zsh` is renamed to `zsh-completions.zsh` to align with the plugin loading conventions in this setup.
+- Zsh plugins:
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+  - zsh-completions
+- `~/.zshrc` from this repo:
+  - `dotfiles/zshrc.linux`
+  - `dotfiles/zshrc.darwin`
 
-### 📌 TODO
+## Prompt: Container Tag
 
-* Add optional automation to fetch missing plugins and perform the required patching step automatically.
+When inside a container, the prompt shows a red bracketed tag (e.g. `[ctr]` or `[container-name]`). It prefers `CTR_NAME`, then `/etc/hostname`, then `HOSTNAME`. Detection is based on common Linux container markers (`/.dockerenv`, `/run/.containerenv`, and `/proc/1/cgroup`). Some container runtimes may not expose these markers; in that case the tag will not appear.
 
-## 🧹 After Install
+## Container Test Notes (Podman)
 
-You may want to:
+On some systems (e.g. btrfs), Podman may need the `vfs` storage driver:
 
-* Verify your `$PATH`
-* Confirm plugin loading succeeded via echoed sourcing lines
-* Restart your terminal to test login behavior
+```bash
+podman run --rm -it --runtime=crun --storage-driver=vfs --root /tmp/podman-root --runroot /tmp/podman-run --network=host \
+  -e HOME=/tmp/home -v /path/to/dots:/repo:Z -w /repo ubuntu:24.04 sh
+```
 
----
+To get a persistent container and a stable prompt name:
+
+```bash
+podman run --name zsh-test --hostname zsh-test -it --runtime=crun --storage-driver=vfs --root /tmp/podman-root --runroot /tmp/podman-run --network=host \
+  -e HOME=/tmp/home -v /path/to/dots:/repo:Z -w /repo ubuntu:24.04 sh
+podman --storage-driver=vfs --root /tmp/podman-root --runroot /tmp/podman-run start -ai zsh-test
+```
+
+## Reports And Backups
+
+Every install creates a report in `~/.zsh/backup/` with:
+- OS detection
+- Plugin install results
+
+Backups of prior `~/.zshrc` are stored alongside the report.
+
+## Requirements
+
+- `git` is required to clone plugins.
+- Network access is required for plugin clones.
+
+## License
 
 Built with intent and maintained manually.
